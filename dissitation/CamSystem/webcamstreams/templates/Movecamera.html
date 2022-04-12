@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+{% block content %}
+    {% if user.is_authenticated %}
+
+</head>
+<body style="text-align:center">
+
+<script type="text/javascript" >
+console.log("fds")
+function updatephoto(ip, id)
+            {
+
+                $.ajax({
+                    type: 'get',
+                    url: "/retrieve_photo/"+ ip,
+                    processData: false,
+                    contentType: false,
+                    success: function (Content, status) {
+                        if (status != 'error') {
+                            //console.log("#"+id);
+                            $("#"+id).attr("src", "data:image/jpeg;base64," + Content);
+                        }
+                    },
+                    error: function () {
+                        console.log("camera: " + ip + "  not connecting");
+                    }
+                });
+
+            }
+
+// Create a client instance
+client = new Paho.MQTT.Client('broker.hivemq.com', 8000, "python323");
+client.connect();
+function Move_Camera(x,y)
+{
+    var message = `{\"servo1\": ${x},\"servo2\": ${y}}`
+    message = new Paho.MQTT.Message(message);
+    message.destinationName = "test/json_test333";
+    client.send(message);
+}
+
+</script>
+
+    <div style="">
+    <div class="camera_stream popup" style="width: 350px; float: left; background-color: #212121;">
+        <p style="color: white;">ip: {{camera.Camera_ip}} type: {{camera.camera_type}}</p>
+        {%  if camera.camera_type == "picam" %}
+        <script>
+                setInterval(updatephoto, 5000, "{{camera.Camera_ip}}", "{{ camera.id}}");
+        </script>
+            <div id="movementSensor">
+            <img id="{{camera.id}}" src="{% static 'defaultimg.jpg' %}" width="80%"/>
+            </div>
+        {% endif %}
+    </div>
+    </div>
+
+     <script>
+     document.getElementById('movementSensor').onclick = function clickEvent(e) {
+      // e = Mouse click event.
+      var rect = e.target.getBoundingClientRect();
+      var x = e.clientX - (rect.left+rect.right)/2; //x position within the element.
+      var y = e.clientY - (rect.top+rect.bottom)/2;  //y position within the element.
+      console.log("Left? : " + x + " ; Top? : " + y + ".");
+      Move_Camera(x,y)
+    }
+     </script>
+
+    {% else %}
+    <h2> not authenticated to see any cameras</h2>
+    {% endif %}
+{% endblock %}

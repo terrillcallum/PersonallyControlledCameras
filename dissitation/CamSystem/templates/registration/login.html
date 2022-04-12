@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Log In{% endblock %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/nicepage.css' %}" media="screen">
+<link rel="stylesheet" href="{% static 'css/login-page.css' %}" media="screen">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+    <section class="u-align-left u-clearfix u-palette-1-base u-section-1" id="sec-923a">
+      <div class="u-clearfix u-sheet u-sheet-1">
+        <div class="u-clearfix u-layout-wrap u-layout-wrap-1">
+          <div class="u-layout">
+            <div class="u-layout-row">
+              <div class="u-container-style u-grey-75 u-layout-cell u-size-60 u-layout-cell-1">
+                <div class="u-border-14 u-border-grey-75 u-container-layout u-container-layout-1">
+                  <div class="u-container-style u-expanded-width-lg u-expanded-width-md u-expanded-width-sm u-expanded-width-xl u-grey-80 u-group u-shape-rectangle u-group-1">
+                    <div class="u-container-layout u-valign-top u-container-layout-2">
+                      <h2 class="u-text u-text-default u-text-1">Log in here</h2>
+                    </div>
+                  </div>
+                  <div style="text-align: center;">
+                  <form method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" style="color: black;">Log In</button>
+                      </form>
+                      <a href="{% url 'signup' %}" > <p><small>not go an account register here</small></p> </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+{% endblock %}

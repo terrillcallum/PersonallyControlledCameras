@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/nicepage.css' %}" media="screen">
+<link rel="stylesheet" href="{% static 'css/login-page.css' %}" media="screen">
+  <script class="u-script" type="text/javascript" src="{% static 'javascript/jquery.js' %}" defer=""></script>
+  <script class="u-script" type="text/javascript" src="{% static 'javascript/nicepage.js' %}" defer=""></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+function allowDrop(ev) {
+  ev.preventDefault();
+}
+
+function drag(ev) {
+  ev.dataTransfer.setData("text", ev.target.id);
+}
+
+function drop(ev) {
+  ev.preventDefault();
+  var data = ev.dataTransfer.getData("text");
+  if (ev.target.tagName == "H4") {
+        console.log("child")
+        ev.target.parentElement.appendChild(document.getElementById(data));
+  }
+  else {
+        console.log(ev.target.tagName)
+        ev.target.appendChild(document.getElementById(data));
+}
+}
+
+
+</script>
+
+<section class="u-clearfix u-section-1" id="sec-2f65">
+      <div class="u-clearfix u-expanded-width u-gutter-0 u-layout-wrap u-layout-wrap-1">
+        <div class="u-gutter-0 u-layout">
+          <div class="u-layout-row">
+            <div class="u-size-30 u-size-60-md">
+              <div class="u-layout-col">
+                <div class="u-container-style u-grey-80 u-layout-cell u-size-60 u-layout-cell-1">
+                  <div class="u-container-layout u-container-layout-1">
+                    <h3 class="u-text u-text-default u-text-1">Cameras</h3>
+                    <div class="u-expanded-width u-list u-list-1">
+                      <ul>
+                            {% if user.is_authenticated %}
+                            {% for camera in Cameras.all %}
+                            <li>
+                              <button style="color: black;" onclick="updateSettings('{{camera.Camera_ip}}'); updateComSettings('{{camera.Camera_ip}}');">{{camera.Camera_ip}}</button>
+                            </li>
+                            {% endfor %}
+                            {% else %}
+                            <h2> not authenticated to see any cameras</h2>
+                            {% endif %}
+
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="u-size-30 u-size-60-md">
+              <div class="u-layout-col">
+                <div class="u-size-30">
+                  <div class="u-layout-row">
+                    <div class="u-container-style u-layout-cell u-palette-1-base u-size-60 u-layout-cell-2">
+                      <div class="u-container-layout u-valign-top u-container-layout-9">
+                        <h3 class="u-text u-text-default u-text-2">Settings:</h3>
+                        <div class="u-expanded-width u-tabs u-tabs-1">
+                          <ul class="u-tab-list u-unstyled" role="tablist">
+                            <li class="u-tab-item u-tab-item-1" role="presentation">
+                              <a class="active u-active-white u-button-style u-tab-link u-tab-link-1" id="link-tab-0da5" href="#tab-0da5" role="tab" aria-controls="tab-0da5" aria-selected="true">Basic settings</a>
+                            </li>
+                            <li class="u-tab-item u-tab-item-2" role="presentation">
+                              <a class="u-active-white u-button-style u-tab-link u-tab-link-2" id="link-tab-14b7" href="#tab-14b7" role="tab" aria-controls="tab-14b7" aria-selected="false">Detections</a>
+                            </li>
+                            <li class="u-tab-item" role="presentation">
+                              <a class="u-active-white u-button-style u-tab-link u-tab-link-3" id="link-tab-2917" href="#tab-2917" role="tab" aria-controls="tab-2917" aria-selected="false">Connections</a>
+                            </li>
+                            <li class="u-tab-item" role="presentation">
+                              <a class="u-active-white u-button-style u-tab-link u-tab-link-4" id="link-tab-d4ba" href="#tab-d4ba" role="tab" aria-controls="tab-d4ba" aria-selected="false">Extras</a>
+                            </li>
+                            <li class="u-tab-item" role="presentation">
+                              <a class="u-active-white u-button-style u-tab-link u-tab-link-5" id="link-tab-d5ba" href="#tab-d5ba" role="tab" aria-controls="tab-d5ba" aria-selected="false">spare tab</a>
+                            </li>
+                          </ul>
+                          <div class="u-tab-content">
+                            <div class="u-container-style u-tab-active u-tab-pane u-white u-tab-pane-1" id="tab-0da5" role="tabpanel" aria-labelledby="link-tab-0da5">
+                              <div class="u-container-layout u-container-layout-10">
+                                <h3 class="u-text u-text-default u-text-3">Basic Settings</h3>
+                                <form id="settings_form"method="post">
+                                {% csrf_token %}
+                                <div id="settings"></div>
+                                <button type="submit" style="color: black;">Save settings</button>
+                                </form>
+                                  <script>
+                                        function updateSettings(ip)
+                                                    {
+                                                    console.log("getting settings for: " + ip);
+                                                        $.ajax({
+                                                            type: 'get',
+                                                            url: "edit_settings_by_ip/"+ ip,
+                                                            processData: false,
+                                                            contentType: false,
+
+                                                            success: function (Content, status) {
+                                                                if (status !== 'error') {
+                                                                    console.log(Content);
+                                                                    document.getElementById("settings").innerHTML  = Content
+                                                                    document.getElementById("settings_form").setAttribute('action', "edit_settings_by_ip/"+ ip + "/")
+                                                                }
+                                                            },
+                                                            error: function () {
+                                                                document.getElementById("settings").innerHTML  = "no found settings"
+                                                            }
+                                                        });
+
+                                                    }
+
+                                  </script>
+
+
+                              </div>
+                            </div>
+                            <div class="u-align-left u-container-style u-tab-pane u-white u-tab-pane-2" id="tab-14b7" role="tabpanel" aria-labelledby="link-tab-14b7">
+                              <div class="u-container-layout u-valign-top u-container-layout-11">
+                                <h2 class="u-text u-text-4">Communication options:</h2>
+                                <form id="coms_settings_form" method="post">
+                                {% csrf_token %}
+                                <div id="coms_settings"></div>
+                                <button type="submit" style="color: black;">Save settings</button>
+                                </form>
+                                  <script>
+                                        function updateComSettings(ip)
+                                                    {
+                                                    console.log("getting coms settings for: " + ip);
+                                                        $.ajax({
+                                                            type: 'get',
+                                                            url: "edit_coms_settings_by_ip/"+ ip,
+                                                            processData: false,
+                                                            contentType: false,
+
+                                                            success: function (Content, status) {
+                                                                if (status !== 'error') {
+                                                                    console.log(Content);
+                                                                    document.getElementById("coms_settings").innerHTML  = Content
+                                                                    document.getElementById("coms_settings_form").setAttribute('action', "edit_coms_settings_by_ip/"+ ip + "/")
+                                                                }
+                                                            },
+                                                            error: function () {
+                                                                document.getElementById("coms_settings").innerHTML  = "no found settings"
+                                                            }
+                                                        });
+
+                                                    }
+
+                                  </script>
+
+
+                              </div>
+                            </div>
+
+                            <div class="u-container-style u-tab-pane u-white u-tab-pane-3" id="tab-2917" role="tabpanel" aria-labelledby="link-tab-2917">
+                              <div class="u-container-layout u-container-layout-12">
+                                <h4 class="u-text u-text-default u-text-5">connection options here</h4>
+                              </div>
+                            </div>
+                            <div class="u-container-style u-tab-pane u-white u-tab-pane-4" id="tab-d4ba" role="tabpanel" aria-labelledby="link-tab-d4ba">
+                              <div class="u-container-layout u-container-layout-13">
+                                <h4 class="u-text u-text-default u-text-6">extra options here</h4>
+                              </div>
+                            </div>
+                            <div class="u-container-style u-tab-pane u-white u-tab-pane-5" id="tab-d5ba" role="tabpanel" aria-labelledby="link-tab-d5ba">
+                              <div class="u-container-layout u-container-layout-14">
+                                <h4 class="u-text u-text-default u-text-">spare space here</h4>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="u-size-30">
+                  <div class="u-layout-row">
+                    <div class="u-container-style u-layout-cell u-palette-1-base u-size-30 u-layout-cell-3">
+                      <div class="u-container-layout u-container-layout-14" ondrop="drop(event)" ondragover="allowDrop(event)">
+                        <h4 class="u-text u-text-default u-text-7">Client side</h4>
+                      </div>
+                    </div>
+                    <div class="u-container-style u-layout-cell u-palette-1-base u-size-30 u-layout-cell-4">
+                      <div class="u-container-layout u-container-layout-15" ondrop="drop(event)" ondragover="allowDrop(event)">
+                        <h4 class="u-text u-text-default u-text-8">Server side</h4>
+                        <h4 id="drag1" draggable="true" ondragstart="drag(event)" style="border-style: solid;">face detection</h4>
+                        <h4 id="drag2" draggable="true" ondragstart="drag(event)" style="border-style: solid;">face detection</h4>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+{% endblock %}
