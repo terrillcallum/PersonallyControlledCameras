@@ -5,6 +5,9 @@ from .models import Camera, CameraSettings, CameraComsSettings
 
 
 class CameraForm(forms.ModelForm):
+    """
+    This is the form for Adding a new camera to the system or editing its settings
+    """
     class Meta:
         model = Camera
         fields = ["Camera_ip", "location", "camera_type"]
@@ -18,6 +21,9 @@ class CameraForm(forms.ModelForm):
 
 
 class UpdateSettings(forms.ModelForm):
+    """
+    This is the form that is used when editing the settings of a camera
+    """
     class Meta:
         model = CameraSettings
         fields = ["fps", "face_detection", "profile_detection", "person_detection", "movement_detection",
@@ -25,6 +31,9 @@ class UpdateSettings(forms.ModelForm):
 
 
 class UpdateComsSettings(forms.ModelForm):
+    """
+    this is the form used when editing the communication settings of a camera
+    """
     class Meta:
         model = CameraComsSettings
         fields = ["MQTT_broker", "MQTT_topic", "discord_webhook"]

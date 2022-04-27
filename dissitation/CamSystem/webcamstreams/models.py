@@ -9,6 +9,10 @@ from webcamstreams.ImageDetection import face_recognizer, detection_drawing, dis
 
 
 class Camera(models.Model):
+    """
+    This model is the Cameras and holds their main details
+    not their detection settings
+    """
     IPCAM = "ipcam"
     PICAM = "picam"
     CAMERA_CHOICES = (
@@ -21,10 +25,14 @@ class Camera(models.Model):
     camera_type = models.CharField(default="unknown", choices=CAMERA_CHOICES, max_length=10)
 
     def GetphotoString(self):
+        """
+        Returns the photo string for the camera
+        """
         new = self.photoString
         return new
 
     def pi_camera_image_grab(self):
+        "Grabs the image from a older version of th pi camera"
         try:
             imgResp = urllib.request.urlopen(f"http://127.0.0.1:8000/webcam_capture/{self.Camera_ip}", timeout=2)
             imgNp = np.array(bytearray(imgResp.read()), dtype=np.uint8)
@@ -38,6 +46,9 @@ class Camera(models.Model):
         return jpeg.tobytes()
 
     def ip_camera_image_grab(self):
+        """
+        Grabs an image from the esp32 IP cameras
+        """
         try:
             imgResp = urllib.request.urlopen(f"http://{self.Camera_ip}/capture", timeout=2)
             imgNp = np.array(bytearray(imgResp.read()), dtype=np.uint8)
@@ -51,6 +62,9 @@ class Camera(models.Model):
         self.save()
 
     def run_detections(self, img):
+        """
+        Runs the Detections that are designated to the server side
+        """
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         if self.camerasettings.face_detection == "SERVER":
             faceDetection = face_recognizer(gray)
@@ -67,6 +81,9 @@ class Camera(models.Model):
 
 
 class CameraSettings(models.Model):
+    """
+    The Main bulk of the camera settings controlling all the detections and more
+    """
     Camera = models.OneToOneField(
         Camera,
         on_delete=models.CASCADE,
@@ -90,6 +107,9 @@ class CameraSettings(models.Model):
 
 
 class CameraComsSettings(models.Model):
+    """
+    the settings related to Communication are stored here
+    """
     Camera = models.OneToOneField(
         Camera,
         on_delete=models.CASCADE,

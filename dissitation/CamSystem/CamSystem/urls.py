@@ -26,7 +26,7 @@ urlpatterns = [
     path('update_photo', webcamstreams.views.update_photo, name='update_photo'),
     path('addCamera', webcamstreams.views.add_camera, name='addCamera'),
     path('manageCamera', webcamstreams.views.manage_camera, name='manageCamera'),
-    path('webcam_feed/<ip>', webcamstreams.views.webcam_feed, name='webcam_feed'),
+    path('cams/webcam_feed/<ip>', webcamstreams.views.webcam_feed, name='webcam_feed'),
     path('webcam_capture/<ip>', webcamstreams.views.webcam_capture, name='webcam_capture'),
     path('accounts/', include('accounts.urls')),
     path('accounts/', include('django.contrib.auth.urls')),

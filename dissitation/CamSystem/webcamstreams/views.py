@@ -15,6 +15,9 @@ photo = "/9j/4AAQSkZJRgABAQEAAAAAAAD/4QBCRXhpZgAATU0AKgAAAAgAAYdpAAQAAAABAAAAGgA
 
 # photo = ""
 def camera_streams(request):
+    """
+    This is the view that shows all the camera live feeds
+    """
     global photo
     return render(request, 'webcamstream.html', {'Cameras': Camera.objects.all()})
     # return render(request, 'webcamstream.html', {'photo': photo})
@@ -22,6 +25,9 @@ def camera_streams(request):
 
 @csrf_exempt
 def update_photo(request):
+    """
+    Used by the Pi cam to update their image
+    """
     if request.method == 'POST':
         updated_photo = request.POST.get("Photo")
         ip = request.POST.get("Device")
@@ -44,6 +50,9 @@ def update_photo(request):
 
 @csrf_exempt
 def retrieve_photo(request, ip):
+    """
+    Grabs a photo of a camera from its ip
+    """
     if request.method == 'GET':
         try:
             connected_camera = Camera.objects.filter(Camera_ip=ip).first()
@@ -53,6 +62,10 @@ def retrieve_photo(request, ip):
 
 
 def add_camera(request):
+    """
+    the page that shows the add camera form for a new
+     camera o be added to the database
+    """
     form = CameraForm(request.POST or None, request.FILES or None)
     if form.is_valid():
         # save the form data to model
@@ -64,6 +77,9 @@ def add_camera(request):
 
 
 def manage_camera(request):
+    """
+    The manager camera page that holds all the settings
+    """
     if not request.user.is_authenticated:
         return render(request, 'home.html')
 
@@ -71,6 +87,9 @@ def manage_camera(request):
 
 
 def move_camera(request, ip):
+    """
+    This shows the page that is used to control a cameras movement
+    """
     if not request.user.is_authenticated:
         return render(request, 'home.html')
     selectedCamera = Camera.objects.filter(Camera_ip=ip).first()
@@ -83,6 +102,9 @@ def webcam_capture(request, ip):
 
 
 def gen(camera):
+    """
+    Generates a Http steam message from bytes
+    """
     while True:
         if camera.camera_type == "ipcam":
             camera.ip_camera_image_grab()
@@ -96,12 +118,18 @@ def gen(camera):
 
 
 def webcam_feed(request, ip):
+    """
+    Used by the IP cams to generate a live feed
+    """
     selectedCamera = Camera.objects.filter(Camera_ip=ip).first()
     return StreamingHttpResponse(gen(selectedCamera),
                                  content_type='multipart/x-mixed-replace; boundary=frame')
 
 
 def settings(request, ip):
+    """
+    Used by the camera to get their updated settings as an API
+    """
     selectedCamera = Camera.objects.filter(Camera_ip=ip).first()
     Settings = {
         "stop": selectedCamera.camerasettings.stop,
@@ -120,6 +148,9 @@ def settings(request, ip):
 
 
 def edit_settings_by_ip(request, ip):
+    """
+    Used to edit the detection settings of a specific camera using ip as the id
+    """
     selectedCamera = Camera.objects.filter(Camera_ip=ip).first()
     try:
         selected_settings = selectedCamera.camerasettings
@@ -138,6 +169,9 @@ def edit_settings_by_ip(request, ip):
 
 
 def edit_coms_settings_by_ip(request, ip):
+    """
+    Used to edit the communication settings of a specific camera using ip as the id
+    """
     selectedCamera = Camera.objects.filter(Camera_ip=ip).first()
     try:
         selected_settings = selectedCamera.cameracomssettings
