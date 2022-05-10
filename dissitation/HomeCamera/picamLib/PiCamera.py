@@ -56,7 +56,7 @@ class PiCamera:
         self.stopped = True
 
     def collect_settings(self):
-        url = f'http://localhost:8000/settings/{self.ip}'  # camera_streams/'
+        url = f'http://127.0.0.1:8000/settings/{self.ip}'  # camera_streams/'
         try:
             data = json.loads(requests.get(url).text)
             self.settings = data

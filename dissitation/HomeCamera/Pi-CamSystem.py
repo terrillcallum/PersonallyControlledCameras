@@ -1,14 +1,11 @@
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 import cv2
-
 from picamLib.APIConnection import post_to_api
 from picamLib.PiCamera import PiCamera
 from picamLib.ImageDetection import distance_guesser, profile_recognizer, movement_detection,\
     detection_drawing, face_recognizer
-
-from HomeCamera.picamLib.APIConnection import post_to_discord_webhook
-
+from picamLib.APIConnection import post_to_discord_webhook
 video = cv2.VideoCapture(0)
 
 print("camera starting")
@@ -52,6 +49,7 @@ while not camera.stopped:
     if Detection:
         if camera.settings["discord_webhook"] != "unknown":
             try:
+                print("discord")
                 post_to_discord_webhook(camera.frame, camera.settings["discord_webhook"], "living room")
             except:
                 print("discord webhook not working")
